@@ -753,25 +753,110 @@ ping 10.4.4.4
 
 ## Part 7: Getting started with NETCONF/YANG – Part 1
 ### Task Preparation and Implementation:
-• Beschrijf de voorbereiding en implementatie van de taak.
-• Leg uit welke stappen, tools of methoden je hebt gebruikt om het onderdeel te voltooien.
+* Enablen NETCONF on the Device:
+* NETCONF Session connection:
+
+gebruik ssh om connectie te maken via netconf
+```plaintext
+ssh -p 830 pxl@192.168.0.50
+```
 ### Task Troubleshooting:
-• Noteer eventuele problemen die je bent tegengekomen en hoe je deze hebt opgelost.
-• Vermeld welke oplossingen of benaderingen je hebt geprobeerd.
+Probleem: Geen reactie na het verzenden van het <hello>-bericht van de client.
+Oplossing: Zorg ervoor dat het bericht eindigt met de ]]>]]>-delimiter, wat aangeeft dat het bericht volledig is verzonden.
+
+Probleem: Verbinding geweigerd bij poging tot SSH op poort 830.
+Oplossing: Controleer of NETCONF is ingeschakeld op het apparaat en of er geen firewallregels zijn die poort 830 blokkeren.
+
 ### Task Verification:
-• Leg uit hoe je hebt gecontroleerd of de taak succesvol was.
-• Beschrijf de testmethoden of technieken die je hebt gebruikt om de taak te verifiëren.
+Controleer de NETCONF-sessie:
+Nadat het <hello>-bericht van de client is verzonden, bevestig dat de sessie actief is door te controleren op foutmeldingen.
+
+Controleer configuratie-ophaling:
+Zorg ervoor dat de <rpc-reply> de verwachte configuratiegegevens bevat, wat aangeeft dat de gegevens succesvol zijn opgehaald.
 
 ## Part 8: Getting started with NETCONF/YANG – Part 2
 ### Task Preparation and Implementation:
-• Beschrijf de voorbereiding en implementatie van de taak.
-• Leg uit welke stappen, tools of methoden je hebt gebruikt om het onderdeel te voltooien.
+Omgeving opzetten:
+
+Kloon de ncc repository van GitHub:
+```bash
+
+git clone https://github.com/CiscoDevNet/ncc.git
+```
+Navigeer naar de ncc directory en creëer een virtuele Python-omgeving:
+```bash
+
+cd ncc
+virtualenv v
+source v/bin/activate
+```
+
+Werk pip bij en installeer de vereiste pakketten:
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+Verbinding maken met het apparaat:
+
+Gebruik de ncc.py tool om verbinding te maken met een apparaat dat IOS-XE 16.3.2 of hoger draait en verkrijg een lijst van capabilities:
+```bash
+
+./ncc.py --host 192.168.0.50 --username pxl --password pxl --capabilities
+```
+
+Configuratie ophalen:
+
+Om de configuratie van alle interfaces op te halen, gebruik de ietf-intf filter:
+```bash
+
+./ncc.py -host 192.168.0.50 --username pxl --password pxl --snippets ./snippets-xe --get-running --named-filter ietf-intf
+```
+Voor een specifieke interface, gebruik de ietf-intf-named filter en specificeer de interface naam:
+```bash
+
+./ncc.py -host 192.168.0.50 --username pxl --password pxl --snippet./snippets-xe --get-running --named-filter ietf-intf-named --params '{"INTF_NAME" : "GigabitEthernet0/0/0"}'
+```
+
 ### Task Troubleshooting:
-• Noteer eventuele problemen die je bent tegengekomen en hoe je deze hebt opgelost.
-• Vermeld welke oplossingen of benaderingen je hebt geprobeerd.
+
+* Tijdens het opzetten kunnen er problemen optreden, zoals ontbrekende pakketten of afhankelijkheden.
+* Zorg ervoor dat pip en virtualenv correct zijn geïnstalleerd en bijgewerkt.
+* Controleer of de juiste versie van IOS-XE (16.3.2 of hoger) op het apparaat draait.
+* Bij verbindingsproblemen, verifieer de netwerkverbinding en de juistheid van de ingevoerde host, gebruikersnaam en wachtwoord.
+
 ### Task Verification:
-• Leg uit hoe je hebt gecontroleerd of de taak succesvol was.
-• Beschrijf de testmethoden of technieken die je hebt gebruikt om de taak te verifiëren.
+1) Controle van de verbinding:
+
+Vervolgens heb ik verbinding gemaakt met een Cisco IOS-XE-apparaat dat ik in onze labomgeving had. Ik gebruikte hiervoor de optie --capabilities om te controleren welke functies beschikbaar zijn op het apparaat.
+Command gebruikt:
+```bash
+
+./ncc.py --host 192.168.0.50 --username pxl --password pxl --capabilities
+```
+Output: een uitgebreide lijst van NETCONF-capabilities, waaronder ondersteuning voor YANG-modellen zoals ietf-interfaces en Cisco-IOS-XE-native.
+Validatie van configuratiegegevens:
+
+Om te verifiëren dat ik toegang had tot de juiste configuratiegegevens, heb ik een filter toegepast om informatie van alle interfaces op te halen. Dit gaf me een duidelijke en georganiseerde XML-uitvoer.
+Command gebruikt:
+```bash
+
+./ncc.py --host 192.168.0.50 --username pxl --password pxl --snippets ./snippets-xe --get-running --named-filter ietf-intf
+```
+![part2](/images/interfaces-part2.png)
+
+Output: Een XML-bestand met details over alle geconfigureerde interfaces, zoals naam, status en IP-adressen. Ik heb deze data vergeleken met de daadwerkelijke configuratie in de CLI van het apparaat om te bevestigen dat de gegevens overeenkwamen.
+Filteren van specifieke configuraties:
+
+Om mijn begrip van de filters verder te testen, heb ik configuratiegegevens opgevraagd voor een specifieke interface, in dit geval GigabitEthernet1/0/1.
+Command gebruikt:
+```bash
+
+./ncc.py --host 192.168.0.50 --username pxl --password pxl --snippets ./snippets-xe --get-running --named-filter ietf-intf-named --params '{"INTF_NAME" : "GigabitEthernet0/0/0"}'
+```
+![part2](/images/single-interface.png)
+
+Output: Alleen de configuratie van de opgegeven interface werd geretourneerd. Ik controleerde dit opnieuw in de CLI en alles klopte.
 
 
 # Extra Information
