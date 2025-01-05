@@ -25,7 +25,7 @@
 ### 3a: Connecting to an IOS-XE Device
 Start with a simple script and gradually expand it with additional features.
 
-• Send show commands to a single device
+• **Send show commands to a single device**
 ``` python3
 from netmiko import ConnectHandler
 
@@ -43,7 +43,7 @@ connection.enable()
 print("Connected to Router 1 Successfully")
 connection.disconnect()
 ```
-• Send configuration commands to a single device
+• **Send configuration commands to a single device**
 ``` python3
 from netmiko import ConnectHandler
 
@@ -64,8 +64,8 @@ connection.send_config_set(config_commands)
 
 connection.disconnect()
 ```
-<!-- !['send_cmd'](/images/send_command.png)  -->
-• Run show commands and save the output
+!['send_cmd'](/images/send_command.png)
+• **Run show commands and save the output**
 ``` python3
 from netmiko import ConnectHandler
 
@@ -87,7 +87,7 @@ with open("running_config.txt", "w") as file:
 
 connection.disconnect()
 ```
-• Backup the device configurations to an external file
+• **Backup the device configurations to an external file**
 ``` python3
 from netmiko import ConnectHandler
 
@@ -109,7 +109,7 @@ with open("running_config.txt", "w") as file:
 
 connection.disconnect()
 ```
-• Send device configuration using an external file
+• **Send device configuration using an external file**
 ``` python3
 from netmiko import ConnectHandler
 
@@ -137,7 +137,7 @@ ip address 10.2.2.2 255.255.255.0
 no shutdown
 ```
 
-• Configure a subset of interfaces
+• **Configure a subset of interfaces**
 ``` python3
 from netmiko import ConnectHandler
 
@@ -164,9 +164,17 @@ for interface in interfaces:
 
 connection.disconnect()
 ```
-• Connect using a Python Dictionary
+• **Connect using a Python Dictionary**
+Gebruik maken bij andere oefeningen door connectHandler te importeren
+door:
+``` python
+from netmiko import ConnectHandler
 
-• Execute a script with functions or classes
+connection = ConnectHandler(**device)
+connection.enable()
+```
+
+• **Execute a script with functions or classes**
 ``` python3
 from netmiko import ConnectHandler
 
@@ -189,7 +197,7 @@ print(send_command(device, "show version"))
 
 connection.disconnect()
 ```
-• Execute a script with conditional statements (if, else)
+• **Execute a script with conditional statements (if, else)**
 ``` python3
 from netmiko import ConnectHandler
 
@@ -211,7 +219,7 @@ else:
 
 connection.disconnect()
 ```
-• Send show commands to multiple devices
+• **Send show commands to multiple devices**
 ``` python3 
 from netmiko import ConnectHandler
 
@@ -232,8 +240,9 @@ devices = [
         "secret": "pxl",  # Enable password
     }
 ]
-
-# Send show commands to multiple devices
+```
+# **Send show commands to multiple devices**
+``` python3
 for device in devices:
     connection = ConnectHandler(**device)
     connection.enable()
@@ -242,7 +251,7 @@ for device in devices:
     connection.disconnect()
 ```
 
-• Send configuration commands to multiple devices
+• **Send configuration commands to multiple devices**
 ``` python3
 from netmiko import ConnectHandler
 
@@ -263,9 +272,10 @@ devices = [
         "secret": "pxl",  # Enable password
     }
 ]
-
-# Send configuration commands to multiple devices
-config_commands = ["hostname NetmikoRouter", "interface loopback0", "ip address 10.10.10.1 255.255.255.0", "no shutdown"]
+```
+# **Send configuration commands to multiple devices**
+```python3
+config_commands = ["hostname NetmikoRouter", "interface loopback0", "ip address 10.1.1.1 255.255.255.0", "no shutdown"]
 
 for device in devices:
     connection = ConnectHandler(**device)
@@ -274,9 +284,11 @@ for device in devices:
     print(f"Configuration sent to device: {device['host']}")
     connection.disconnect()
 ```
+
 #### Task Preparation and Implementation:
-- ### 1. Install Python 3 and Netmiko
-Installation of python3 and Netmiko:
+### 1. Install Python 3 and Netmiko
+
+* Installation of python3 and Netmiko:
 ``` bash 
 sudo apt update
 sudo apt install python3 python3-pip -y
@@ -291,7 +303,7 @@ ping 192.168.0.50
 ssh -oHostKeyAlgorithms=+ssh-rsa -oKexAlgorithms=+diffie-hellman-group14-sha1 pxl@192.168.178.50
 ```
 
-2) Probleem: Ongeldige of Verkeerd Getypte Commando’s, De commando's werkten niet zoals verwacht op de router.
+2) **Probleem:** Ongeldige of Verkeerd Getypte Commando’s, De commando's werkten niet zoals verwacht op de router.
 **Oplossing:** Controleer de juistheid van de commando's handmatig op de CLI van de router met:
 
 ```plaintext
@@ -300,7 +312,7 @@ show ip interface brief
 
 3) Probleem: Time-outs bij Verbinding
 
-Probleem: Langdurige scripts faalden door time-out fouten.
+**Probleem:** Langdurige scripts faalden door time-out fouten.
 **Oplossing:** Voeg een time-outparameter toe in het device woordenboek:
 
 ```python
@@ -321,7 +333,7 @@ python3 script.py
 would use every day. Surprise your lecturer!
 Document your findings and important commands
 
-``` python3
+``` python
 from netmiko import ConnectHandler
 
 # Router connection details
@@ -399,7 +411,8 @@ ip access-group BLOCKED_IPS in
 
 Probleem: Het script kreeg een time-out door verkeerde inloggegevens.
 Oplossing: Controleer de username, password en secret en test handmatige SSH-toegang.
-#### Task Verification:
+
+### Task Verification:
 Controle stappen:
 Script uitvoeren:
 
